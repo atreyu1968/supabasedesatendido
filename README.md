@@ -26,7 +26,7 @@ Antes de ejecutar el script, asegúrese de cumplir con los siguientes requisitos
 
 Clona este repositorio en tu servidor:
 ```bash
-git clone https://github.com/tu-usuario/tu-repositorio-supabase.git
+git clone https://github.com/atreyu1968/supabasedesatendido.git
 cd tu-repositorio-supabase
 ```
 
