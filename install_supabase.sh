@@ -1,5 +1,6 @@
 #!/bin/bash
 
+# Parte 1: Instalación y configuración inicial
 # Actualizar el sistema
 apt update && apt upgrade -y
 
@@ -23,7 +24,7 @@ systemctl start docker
 # Instalar Docker Compose
 if ! command -v docker-compose &> /dev/null; then
     echo "Instalando Docker Compose..."
-    wget -qO /usr/local/bin/docker-compose "https://github.com/docker/compose/releases/download/$(wget -qO- https://api.github.com/repos/docker/compose/releases/latest | grep tag_name | cut -d '\"' -f 4)/docker-compose-$(uname -s)-$(uname -m)"
+    wget -qO /usr/local/bin/docker-compose "https://github.com/docker/compose/releases/download/$(wget -qO- https://api.github.com/repos/docker/compose/releases/latest | grep tag_name | cut -d '"' -f 4)/docker-compose-$(uname -s)-$(uname -m)"
     chmod +x /usr/local/bin/docker-compose
 else
     echo "Docker Compose ya está instalado."
@@ -60,15 +61,12 @@ KONG_HTTP_PORT=8000
 KONG_HTTPS_PORT=8443
 EOF
 
-#!/bin/bash
-
-# Generar archivo docker-compose.yml
+# Crear archivo docker-compose.yml
 cat <<'EOD' > docker-compose.yml
-version: '3.8'
 services:
   db:
     container_name: supabase-db
-    image: supabase/postgres:14
+    image: supabase/postgres:15.3.0
     restart: unless-stopped
     environment:
       POSTGRES_PASSWORD: ${POSTGRES_PASSWORD}
@@ -83,12 +81,14 @@ services:
       SUPABASE_URL: http://localhost:8000
       SUPABASE_ANON_KEY: ${ANON_KEY}
       SUPABASE_SERVICE_KEY: ${SERVICE_ROLE_KEY}
+    ports:
+      - "8000:8000"
 EOD
 
-# Desplegar contenedores
+# Levantar los contenedores
 docker-compose up -d
 
-# Preguntar al usuario si desea instalar Cloudflare Tunnel
+# Parte 2: Configuración opcional de Cloudflare
 read -p "¿Desea instalar y configurar Cloudflare Tunnel? (s/n): " INSTALL_CLOUDFLARE
 if [[ "$INSTALL_CLOUDFLARE" =~ ^[sS]$ ]]; then
     if ! command -v cloudflared &> /dev/null; then
@@ -132,4 +132,3 @@ cat <<EOF > /opt/supabase/informacion_final.md
 EOF
 
 echo "Instalación completada. Verifique el archivo /opt/supabase/informacion_final.md para los detalles de acceso."
-
