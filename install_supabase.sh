@@ -66,7 +66,7 @@ cat <<'EOD' > docker-compose.yml
 services:
   db:
     container_name: supabase-db
-    image: supabase/postgres:15.3.0
+    image: supabase/postgres:15.1.0.106
     restart: unless-stopped
     environment:
       POSTGRES_PASSWORD: ${POSTGRES_PASSWORD}
